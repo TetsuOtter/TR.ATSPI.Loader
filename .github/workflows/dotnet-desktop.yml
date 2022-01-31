@@ -1,0 +1,25 @@
+name: publish to nuget
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+jobs:
+  publish:
+    name: build, pack & publish
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+
+      - name: publish on version change
+        id: publish_nuget
+        uses: rohith/publish-nuget@v2
+        with:
+          PROJECT_FILE_PATH: TR.ATSPI.Loader/TR.ATSPI.Loader.csproj          
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}

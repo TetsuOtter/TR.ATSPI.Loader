@@ -66,8 +66,10 @@ public class SameTargetNativeATSPI
 		PI_SetVehicleSpec = DM.GetProcDelegate<d_SetVehicleSpec>(nameof(SetVehicleSpec));
 	}
 
+	/// <summary>アンマネージドなリソースを確実に解放する</summary>
 	~SameTargetNativeATSPI() => DM.Dispose();//DllManagerは確実に解放する
 
+	/// <summary>インスタンスが保持するリソースを解放する</summary>
 	public void Dispose()
 	{
 		PI_Dispose?.Invoke();
@@ -75,22 +77,72 @@ public class SameTargetNativeATSPI
 		DM.Dispose();
 	}
 
+	/// <summary>DLLに含まれる関数を呼び出す</summary>
+	/// <typeparam name="T">関数の型 (Generic型が含まれる場合は使用不可)</typeparam>
+	/// <param name="method">関数名</param>
+	/// <returns>関数のdelegate</returns>
 	public T? GetProcDelegate<T>(in string method) where T : class
 		=> DM.GetProcDelegate<T>(method);
 
+	#region ATS-Plugin functions
+	/// <summary>ドアが閉じた際に呼ぶ関数</summary>
 	public void DoorClose() => PI_DoorClose?.Invoke();
+
+	/// <summary>ドアが開いた際に呼ぶ関数</summary>
 	public void DoorOpen() => PI_DoorOpen?.Invoke();
+
+	/// <summary>毎フレーム実行される関数</summary>
+	/// <param name="s">状態が保存された構造体</param>
+	/// <param name="Pa">パネル配列</param>
+	/// <param name="So">サウンド配列</param>
+	/// <returns>ハンドル状態</returns>
 	public Hand Elapse(State s, IntPtr Pa, IntPtr So) => PI_Elapse?.Invoke(s, Pa, So) ?? default;
+
+	/// <summary>プラグインのバージョンを取得する</summary>
+	/// <returns>プラグインのインターフェイスバージョン</returns>
 	public uint GetPluginVersion() => PI_GetPluginVersion?.Invoke() ?? ConstantValue.VersionNum;
+
+	/// <summary>警笛吹鳴時に呼び出す</summary>
+	/// <param name="k">警笛の種類</param>
 	public void HornBlow(int k) => PI_HornBlow?.Invoke(k);
+
+	/// <summary>初期化時に呼び出す</summary>
+	/// <param name="s">車両初期状態</param>
 	public void Initialize(int s) => PI_Initialize?.Invoke(s);
+
+	/// <summary>キー押下時に呼び出す</summary>
+	/// <param name="k">キー番号</param>
 	public void KeyDown(int k) => PI_KeyDown?.Invoke(k);
+
+	/// <summary>キー解放時に呼び出す</summary>
+	/// <param name="k">キー番号</param>
 	public void KeyUp(int k) => PI_KeyUp?.Invoke(k);
+
+	/// <summary>データ読み込み時に呼び出す</summary>
 	public void Load() => PI_Load?.Invoke();
+
+	/// <summary>地上子通過時に呼び出す</summary>
+	/// <param name="b">地上子情報</param>
 	public void SetBeaconData(Beacon b) => PI_SetBeaconData?.Invoke(b);
+
+	/// <summary>ブレーキ操作時に呼び出す</summary>
+	/// <param name="b">ブレーキ段数</param>
 	public void SetBrake(int b) => PI_SetBrake?.Invoke(b);
+
+	/// <summary>力行操作時に呼び出す</summary>
+	/// <param name="p">ノッチ段数</param>
 	public void SetPower(int p) => PI_SetPower?.Invoke(p);
+
+	/// <summary>レバーサー操作時に呼び出す</summary>
+	/// <param name="r">レバーサー段数</param>
 	public void SetReverser(int r) => PI_SetReverser?.Invoke(r);
+
+	/// <summary>信号現示が変化した際に呼び出す</summary>
+	/// <param name="s">新しい信号現示</param>
 	public void SetSignal(int s) => PI_SetSignal?.Invoke(s);
+
+	/// <summary>車両のスペックを設定する</summary>
+	/// <param name="s">スペック情報</param>
 	public void SetVehicleSpec(Spec s) => PI_SetVehicleSpec?.Invoke(s);
+	#endregion
 }

@@ -1,14 +1,17 @@
 ﻿using System.Runtime.InteropServices;
 
 namespace TR.ATSPI.Types;
-public class ConstantValue
+
+/// <summary>定数値を記録したクラス</summary>
+public static class ConstantValue
 {
-	static public uint VersionNum = 0x00020000;
+	/// <summary>バージョン番号</summary>
+	static public readonly uint VersionNum = 0x00020000;
 }
 
 /// <summary>車両のスペック</summary>
 [StructLayout(LayoutKind.Sequential)]
-public struct Spec
+public record struct Spec
 {
 	/// <summary>ブレーキ段数</summary>
 	public int B;

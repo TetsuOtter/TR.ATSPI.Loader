@@ -55,6 +55,8 @@ public class DllManager : IDisposable
 		ModuleHandle = LoadLibrary(path);
 	}
 
+	/// <summary>リソースを解放する</summary>
+	/// <param name="disposing">マネージドリソースも解放するか</param>
 	protected virtual void Dispose(bool disposing)
 	{
 		if (!disposedValue)
@@ -65,11 +67,13 @@ public class DllManager : IDisposable
 		}
 	}
 
+	/// <summary>(デストラクタ) : アンマネージドリソースを確実に解放する</summary>
 	~DllManager()
 	{
 		Dispose(disposing: false);
 	}
 
+	/// <summary>インスタンスのリソースを解放する</summary>
 	public void Dispose()
 	{
 		Dispose(disposing: true);
